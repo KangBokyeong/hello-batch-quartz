@@ -23,6 +23,7 @@ public class HelloJobScheduler implements Job {
         System.out.println("🕐 Quartz 트리거 실행됨!");
         try {
             JobParameters params = new JobParametersBuilder()
+                    .addString("joinedAfter", "2025-04-02")
                     .addLong("time", System.currentTimeMillis())
                     .toJobParameters();
 

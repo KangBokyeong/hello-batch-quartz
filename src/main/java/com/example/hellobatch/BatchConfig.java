@@ -6,11 +6,13 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.*;
 import org.springframework.batch.item.support.IteratorItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -49,19 +51,23 @@ public class BatchConfig {
 
 
     @Bean
-    public JpaPagingItemReader<User> userReader(EntityManagerFactory emf) {
+    @StepScope
+    public JpaPagingItemReader<User> userReader(
+            EntityManagerFactory emf,
+            @Value("#{jobParameters['joinedAfter']}") String joinedAfterStr
+    ) {
+        LocalDate joinedAfter = LocalDate.parse(joinedAfterStr);
+
         JpaPagingItemReader<User> reader = new JpaPagingItemReader<>();
-
-        LocalDate yesterday = LocalDate.now().minusDays(1);
-
         reader.setQueryString("SELECT u FROM User u WHERE u.processed = false AND u.joinedAt >= :joinedAt");
         reader.setEntityManagerFactory(emf);
+        reader.setParameterValues(Map.of("joinedAt", joinedAfter));
         reader.setPageSize(10);
-        reader.setParameterValues(Map.of("joinedAt", yesterday));
         reader.setName("userReader");
 
         return reader;
     }
+
 
 
     @Bean
