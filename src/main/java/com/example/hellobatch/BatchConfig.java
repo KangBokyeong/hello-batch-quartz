@@ -12,7 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.batch.item.ItemProcessor;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableBatchProcessing
@@ -49,12 +51,18 @@ public class BatchConfig {
     @Bean
     public JpaPagingItemReader<User> userReader(EntityManagerFactory emf) {
         JpaPagingItemReader<User> reader = new JpaPagingItemReader<>();
-        reader.setQueryString("SELECT u FROM User u WHERE u.processed = false");
+
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+
+        reader.setQueryString("SELECT u FROM User u WHERE u.processed = false AND u.joinedAt >= :joinedAt");
         reader.setEntityManagerFactory(emf);
         reader.setPageSize(10);
+        reader.setParameterValues(Map.of("joinedAt", yesterday));
         reader.setName("userReader");
+
         return reader;
     }
+
 
     @Bean
     public JpaItemWriter<User> userWriter(EntityManagerFactory emf) {

@@ -1,6 +1,7 @@
 package com.example.hellobatch;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
@@ -13,6 +14,8 @@ public class User {
     private String name;
     private String email;
     private boolean processed;
+    @Column(name = "joined_at")
+    private LocalDate joinedAt;
 
     // 기본 생성자 (JPA 필수)
     public User() {}
@@ -29,4 +32,12 @@ public class User {
 
     public boolean isProcessed() { return processed; }
     public void setProcessed(boolean processed) { this.processed = processed; }
+
+    public LocalDate getJoinedAt() {
+        return joinedAt;
+    }
+    public void setJoinedAt(LocalDate joinedAt) {
+        this.joinedAt = joinedAt;
+    }
+
 }
