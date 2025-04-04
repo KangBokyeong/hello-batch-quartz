@@ -9,13 +9,24 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
-    mavenCentral() // ✅ 꼭 필요!
+    mavenCentral()
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // ✅ JPA 핵심 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'      // ✅ 필수!
+    implementation 'jakarta.mail:jakarta.mail-api:2.1.2'                    // ✅ MimeMessage 포함!
+
     runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
 }
