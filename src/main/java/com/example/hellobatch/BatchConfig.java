@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.FileSystemResource;
 
 import java.time.LocalDate;
@@ -119,8 +120,8 @@ public class BatchConfig {
                 .build();
     }
 
-    @Bean
-    public Job exportUserJob(JobBuilderFactory jobBuilderFactory,
+    @Bean(name = "exportUserJob")
+    public Job exportUserJobBean(JobBuilderFactory jobBuilderFactory,
                              Step exportToCsvStep,
                              Step checkDataStep) {
         return jobBuilderFactory.get("exportUserJob")
