@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,35 +30,6 @@ import java.util.Map;
 @Configuration
 @EnableBatchProcessing
 public class BatchConfig {
-
-    @Autowired
-    private UserEmailService userEmailService;
-
-    @Bean
-    public Job helloJob(JobBuilderFactory jobBuilderFactory, Step helloStep) {
-        return jobBuilderFactory.get("helloJob")
-                .start(helloStep)
-                .build();
-    }
-
-    @Bean
-    public Step helloStep(StepBuilderFactory stepBuilderFactory,
-                          JpaPagingItemReader<User> userReader,
-                          JpaItemWriter<User> userWriter) {
-
-        ItemProcessor<User, User> processor = user -> {
-            System.out.println("✅ 처리 중: " + user.getName());
-            user.setProcessed(true);
-            return user;
-        };
-
-        return stepBuilderFactory.get("helloStep")
-                .<User, User>chunk(10)
-                .reader(userReader)
-                .processor(processor)
-                .writer(userWriter)
-                .build();
-    }
 
     @Bean
     @StepScope
@@ -113,12 +85,11 @@ public class BatchConfig {
         ItemProcessor<User, User> processor = user -> {
             System.out.println("✅ 처리 중: " + user.getName());
             user.setProcessed(true);
-            userEmailService.sendProcessedMail(user); // ✉ 이메일 전송
             return user;
         };
 
         return stepBuilderFactory.get("exportToCsvStep")
-                .<User, User>chunk(10)
+                .<User, User>chunk(10) // 10건씩 묶어서 처리
                 .reader(userReader)
                 .processor(processor)
                 .writer(csvWriter)
@@ -137,6 +108,11 @@ public class BatchConfig {
                 .end()
                 .listener(listener)
                 .build();
+    }
+
+    @Bean
+    public JobResultListener jobResultListener(JavaMailSender mailSender) {
+        return new JobResultListener(mailSender);
     }
 
     @Bean

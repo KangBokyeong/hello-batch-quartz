@@ -1,7 +1,7 @@
 # 📦 hello-batch-quartz
 
 Spring Batch + Quartz를 활용한 **데이터 처리 자동화 프로젝트**입니다.  
-사용자 정보를 DB에서 읽고, 조건에 맞게 처리 후 CSV로 저장하고, 이메일로 결과를 발송합니다.
+사용자 정보를 DB에서 읽고, 조건에 맞게 처리 후 CSV로 저장하고, 관리자에게 결과를 이메일로 전송합니다.
 
 ---
 
@@ -9,13 +9,13 @@ Spring Batch + Quartz를 활용한 **데이터 처리 자동화 프로젝트**�
 
 | 기능 | 설명 |
 |------|------|
-| 🗓 Quartz 스케줄러 | 10초마다 Batch Job 자동 실행 |
+| ⏰ Quartz 스케줄러 | 특정 시간 이후 한 번만 Job 실행 |
 | 🧪 H2 In-Memory DB | 테스트용 DB (`data.sql`로 초기화) |
 | 📄 CSV 저장 | 처리된 유저를 지정한 경로에 저장 |
-| 📧 이메일 전송 | 처리 완료된 유저에게 이메일 발송 |
+| ✉ 관리자 이메일 전송 | 처리 통계 결과를 **한 번만** 전송 |
 | ⚙ JobParameter 지원 | `joinedAfter`, `outputFile` 파라미터 CLI 입력 가능 |
-| 📊 처리 통계 출력 | 처리 건수 Job Listener에서 출력 |
-| 🚫 데이터 없을 경우 종료 | 처리할 유저 없으면 Job 중단 & CSV 미생성 |
+| 📊 처리 통계 출력 | JobListener를 통해 처리 건수 출력 |
+| 🚫 처리 대상 없으면 종료 | 유저 없을 경우 Job 중단 & CSV 미생성 |
 
 ---
 
@@ -27,8 +27,8 @@ Spring Batch + Quartz를 활용한 **데이터 처리 자동화 프로젝트**�
 ```
 
 ### 2. Quartz 자동 실행
-- 내부적으로 10초마다 자동 실행
-- `joinedAfter`와 `outputFile` 기본값 자동 지정
+- 애플리케이션 시작 시, `QuartzConfig`에 지정된 시각 이후 **한 번만 자동 실행**
+- 기본값으로 하드코딩된 날짜 및 저장 경로 사용 가능
 
 ---
 
@@ -55,23 +55,16 @@ spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
-> 🔐 Gmail 보안 - 앱 비밀번호를 생성해서 사용하세요.  
-> [앱 비밀번호 생성 가이드](https://support.google.com/mail/answer/185833?hl=ko)
+> 🔐 **앱 비밀번호**를 발급받아야 합니다.  
+> 👉 [앱 비밀번호 생성 가이드](https://support.google.com/mail/answer/185833?hl=ko)
 
 ---
 
-## 💡 향후 추가 예정
+## 📧 이메일 관련 설명
 
-- 📬 관리자에게 전체 결과 요약 이메일 발송
-- 🗃 CSV 업로드 기능 추가
-- 📊 Web UI 통계 시각화
-
----
-
-## 🙌 만든 이유
-
-- Spring Batch와 Quartz 연동 연습
-- 실전 데이터 처리 흐름을 연습하고 익히기 위해
+- ✅ **처리 완료 후**, 관리자(지정된 메일)에만 통계 결과를 이메일로 전송합니다.
+- ❌ 각 유저에게 개별 메일은 전송하지 않습니다.
+- 📊 이메일에는 처리된 총 건수, 읽은 건수, 쓴 건수가 포함됩니다.
 
 ---
 
@@ -83,3 +76,10 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 - Quartz Scheduler
 - H2 Database
 - JavaMailSender
+
+---
+
+## 🙌 만든 이유
+
+- Spring Batch & Quartz 실무 흐름 학습
+- 조건 필터링, CSV 저장, 통계 수집, 이메일 전송 등 배치 전 과정 구현

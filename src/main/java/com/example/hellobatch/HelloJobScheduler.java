@@ -31,15 +31,11 @@ public class HelloJobScheduler implements Job {
             org.springframework.batch.core.Job exportUserJob =
                     (org.springframework.batch.core.Job) context.getBean("exportUserJob");
 
-            // ✅ 콘솔 출력용 Job
-            org.springframework.batch.core.Job helloJob =
-                    (org.springframework.batch.core.Job) context.getBean("helloJob");
-
             // 먼저 CSV 저장
             jobLauncher.run(exportUserJob, params);
 
-            // 그 다음 콘솔 출력
-            jobLauncher.run(helloJob, params);
+            // ✅ 모든 작업이 끝난 후 애플리케이션 종료
+            System.exit(0);
 
         } catch (Exception e) {
             e.printStackTrace();
