@@ -122,14 +122,18 @@ public class BatchConfig {
 
     @Bean(name = "exportUserJob")
     public Job exportUserJobBean(JobBuilderFactory jobBuilderFactory,
-                             Step exportToCsvStep,
-                             Step checkDataStep) {
+                                 Step exportToCsvStep,
+                                 Step checkDataStep,
+                                 JobResultListener listener) {
         return jobBuilderFactory.get("exportUserJob")
                 .start(checkDataStep)
-                .on("NOOP").end() // 처리할 유지 없으면 종료
-                .from(checkDataStep).on("*").to(exportToCsvStep).end() // 그 외엔 다음 스탭 진행
+                .on("NOOP").end()
+                .from(checkDataStep).on("*").to(exportToCsvStep)
+                .end()
+                .listener(listener) // ✅ 여기에 붙여줌
                 .build();
     }
+
 
     @Bean
     public Step checkDataStep(StepBuilderFactory stepBuilderFactory, EntityManagerFactory emf) {
