@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>📦 Batch 실행</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="date"],
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 16px;
+            margin-right: 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #buttons {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>📦 배치 작업 실행</h2>
+
+<form id="batchForm">
+    <label for="joinedAfter">가입일 (joinedAfter):</label><br>
+    <input type="date" id="joinedAfter" name="joinedAfter" required><br>
+
+    <label for="outputFile">CSV 저장 경로 (outputFile):</label><br>
+    <input type="text" id="outputFile" name="outputFile" value="/Users/b.k.kang/Desktop/output_users.csv" required><br>
+
+    <div id="buttons">
+        <button type="submit">🟢 실행하기</button>
+        <button type="button" onclick="shutdownApp()">🛑 종료</button>
+    </div>
+</form>
+
+<script>
+    document.getElementById("batchForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const joinedAfter = document.getElementById("joinedAfter").value;
+        const outputFile = document.getElementById("outputFile").value;
+
+        fetch("/batch/run", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `joinedAfter=${encodeURIComponent(joinedAfter)}&outputFile=${encodeURIComponent(outputFile)}`
+        })
+            .then(res => res.text())
+            .then(msg => alert(msg))
+            .catch(err => alert("실행 요청 실패: " + err));
+    });
+
+    function shutdownApp() {
+        fetch("/batch/shutdown", { method: "POST" })
+            .then(res => res.text())
+            .then(msg => alert(msg))
+            .catch(err => alert("종료 요청 실패: " + err));
+    }
+</script>
+
+</body>
+</html>

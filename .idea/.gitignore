@@ -6,3 +6,6 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+# ✅ 로컬 실행 스크립트 무시
+run.sh

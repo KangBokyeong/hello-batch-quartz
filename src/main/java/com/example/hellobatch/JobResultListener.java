@@ -20,7 +20,9 @@ public class JobResultListener extends JobExecutionListenerSupport {
 
     @Override
     public void afterJob(JobExecution jobExecution) {
-        System.out.println("🔔 afterJob 실행!");
+        System.out.println("✅ 테스트: 이메일 계정 = " + System.getenv("SPRING_MAIL_USERNAME"));
+        System.out.println("✅ 테스트: 앱 비밀번호 = " + System.getenv("SPRING_MAIL_PASSWORD")); // 보안상 실제 운영에선 출력 X
+
         int readCount = jobExecution.getStepExecutions().stream().mapToInt(StepExecution::getReadCount).sum();
         int writeCount = jobExecution.getStepExecutions().stream().mapToInt(StepExecution::getWriteCount).sum();
 

@@ -25,7 +25,8 @@ public class QuartzConfig {
     @Bean
     public Trigger oneTimeTrigger() {
         // 오늘 날짜 기준, 원하는 시각으로 설정 (예: 오후 3시)
-        LocalDateTime startAt = LocalDate.now().atTime(15, 0); // 15:00
+        // LocalDateTime startAt = LocalDate.now().atTime(15, 0); // 15:00
+        LocalDateTime startAt = LocalDateTime.now().plusMinutes(1); // 1분 뒤, 테스트용
         Date startDate = Date.from(startAt.atZone(ZoneId.systemDefault()).toInstant());
 
         return TriggerBuilder.newTrigger()

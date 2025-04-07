@@ -35,7 +35,7 @@ public class HelloJobScheduler implements Job {
             jobLauncher.run(exportUserJob, params);
 
             // ✅ 모든 작업이 끝난 후 애플리케이션 종료
-            System.exit(0);
+            //System.exit(0);
 
         } catch (Exception e) {
             e.printStackTrace();
