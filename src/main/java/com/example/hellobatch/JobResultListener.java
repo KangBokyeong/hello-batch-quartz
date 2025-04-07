@@ -20,6 +20,7 @@ public class JobResultListener extends JobExecutionListenerSupport {
 
     @Override
     public void afterJob(JobExecution jobExecution) {
+        System.out.println("🔔 afterJob 실행!");
         int readCount = jobExecution.getStepExecutions().stream().mapToInt(StepExecution::getReadCount).sum();
         int writeCount = jobExecution.getStepExecutions().stream().mapToInt(StepExecution::getWriteCount).sum();
 

@@ -21,14 +21,26 @@ Spring Batch + Quartz를 활용한 **데이터 처리 자동화 프로젝트**�
 
 ## ⚙ 실행 방법
 
-### 1. CLI 실행
-```bash
-./gradlew bootRun --args='joinedAfter=2025-04-01 outputFile=/Users/yourname/Desktop/users.csv'
+
+### 1. Quartz 자동 실행 (기본 방식)
+- `Quartz Scheduler`가 **지정된 시각 이후에 한 번만 실행**되도록 구성되어 있습니다.
+- 실행 시점은 `QuartzConfig.java` 내 `startAt` 설정으로 조정할 수 있습니다.
+
+```java
+// 예: 오늘 오후 3시에 한 번 실행
+LocalDateTime startAt = LocalDate.now().atTime(15, 0);
 ```
 
-### 2. Quartz 자동 실행
-- 애플리케이션 시작 시, `QuartzConfig`에 지정된 시각 이후 **한 번만 자동 실행**
-- 기본값으로 하드코딩된 날짜 및 저장 경로 사용 가능
+### ⛔ CLI 직접 실행 방식 제거됨
+
+- 기존 CLI 실행 방식은 더 이상 사용하지 않으며, 다음 코드는 제거되었습니다.
+- 배치 작업은 CLI 인자가 아닌, Quartz 트리거로만 실행됩니다.
+- 파라미터는 내부에서 자동 지정됩니다 (joinedAfter, outputFile 등).
+
+```bash
+# ❌ 더 이상 사용되지 않음
+./gradlew bootRun --args='joinedAfter=2025-04-01 outputFile=/tmp/users.csv'
+```
 
 ---
 
